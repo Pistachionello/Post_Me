@@ -1,11 +1,11 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {ErrorMessage, Field, Form, Formik} from "formik";
-import Loader from "react-loader-spinner";
 import Button from "@material-ui/core/Button";
 import {useParams} from "react-router-dom";
 import * as Yup from "yup";
 
 import useHttp from "../hooks/http.hook";
+import Loading from "./Loading";
 
 export default function ShowPost() {
     const {postId} = useParams();
@@ -41,11 +41,7 @@ export default function ShowPost() {
 
     return (
         <div className="container pt-2">
-            {loading ? (
-                <div className="d-flex justify-content-center">
-                    <Loader type="ThreeDots"/>
-                </div>
-            ) : (
+            {loading ? (<Loading/>) : (
                 post && (
                     <div>
                         Title: <br/>
@@ -62,7 +58,7 @@ export default function ShowPost() {
                                 validationSchema={validationSchema}
                                 onSubmit={onSubmit}
                             >
-                                {(props) => {
+                                {() => {
                                     return (
                                         <Form>
                                             Leave comment:
