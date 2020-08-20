@@ -1,0 +1,61 @@
+body {
+    min-width: 320px;
+}
+
+body.confirm {
+    overflow: hidden;
+}
+
+* {
+    overflow-wrap: break-word;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.errors_container {
+    color: #ff0000;
+}
+
+.confirmation_container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.425);
+    z-index: 100000;
+}
+
+.confirmation_container .confirmation_content {
+    background-color: rgb(255, 255, 255);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 0 solid;
+    border-radius: 5px;
+    padding: 20px;
+    user-select: none;
+}
+
+.data_container {
+    position: relative;
+}
+
+.data_container .collapse_opener {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+}
+
+.post_link {
+    color: #007bff;
+}
+
+.post_link:hover {
+    text-decoration: underline;
+    color: #0056b3;
+    cursor: pointer;
+}
