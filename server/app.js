@@ -25,7 +25,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 //Define port variable
-const port = process.env.SERVER_STARTING_PORT || 3000;
+const port = process.env.PORT || 3000;
 
 //Instruct server to listen for connections on that port
 server.listen(port, () => {
