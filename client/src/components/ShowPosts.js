@@ -17,7 +17,7 @@ export default function ShowPosts() {
         if (data && data.result) {
             setPosts(data.result);
         }
-    }, [request])
+    }, [])
 
     useEffect(() => {
         getPosts();
@@ -25,10 +25,6 @@ export default function ShowPosts() {
             abort();
         }
     }, [getPosts])
-
-    function handleRedirect(url) {
-        history.push(url);
-    }
 
     return (
         <div className="container pt-2">
@@ -40,7 +36,7 @@ export default function ShowPosts() {
                 posts?.length && posts.map((post) => {
                     return (
                         <div className="post_link" key={post.publication_date}
-                             onClick={() => handleRedirect(`/post/${post.id}`)}>
+                             onClick={() => history.push(`/post/${post.id}`)}>
                             {post.title}
                         </div>
                     )

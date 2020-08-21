@@ -21,7 +21,7 @@ export default function ShowPost() {
         if (data && data.result) {
             setPost(data.result);
         }
-    }, [request, postId])
+    }, [postId])
 
     useEffect(() => {
         getPost();

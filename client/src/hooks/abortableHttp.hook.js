@@ -14,7 +14,10 @@ export default function useAbortableHttp() {
 
         if (opts && opts.body) {
             opts.body = JSON.stringify(opts.body);
-            opts["headers"] = {};
+
+            if(!opts["headers"]){
+                opts["headers"] = {};
+            }
             opts["headers"]["Content-Type"] = "application/json";
         }
 

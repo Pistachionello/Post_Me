@@ -33,7 +33,7 @@ export default function LoginComponent() {
             body: {user: values},
         })
         if (data && data.token) {
-            login(data.token);
+            await login(data.token);
         }
     }
 
@@ -50,7 +50,7 @@ export default function LoginComponent() {
                 validationSchema={validationSchema}
                 onSubmit={onSubmit}
             >
-                {(props) => {
+                {() => {
                     return (
                         <Form>
                             <div className="input_container mb-2">

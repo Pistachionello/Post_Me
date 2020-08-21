@@ -1,6 +1,3 @@
-//Import db access
-const db = require("../db/dbConfig");
-
 //Importing express router for setting up routes
 const router = require("express").Router();
 

@@ -1,6 +1,3 @@
-//Import db access
-const db = require("../db/dbConfig");
-
 //Import required modules || attributes
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
