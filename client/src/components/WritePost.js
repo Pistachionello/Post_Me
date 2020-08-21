@@ -1,16 +1,16 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Button from "@material-ui/core/Button";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {useSelector} from "react-redux";
 import * as Yup from "yup";
 
 import TextAreaField from "./FormikComponents/TextAreaField";
-import useHttp from "../hooks/http.hook";
+import useAbortableHttp from "../hooks/abortableHttp.hook";
 
 export default function WritePost() {
     const {token} = useSelector(state => state.authReducer);
 
-    const {request, loading} = useHttp();
+    const {abort, request, loading} = useAbortableHttp();
 
     const initialValues = {
         title: "",
@@ -26,8 +26,18 @@ export default function WritePost() {
     });
 
     async function onSubmit(values) {
-        await request("/api/user/post/create", "POST", values, {Authorization: `Bearer ${token}`});
+        await request("/api/user/post/create", {
+            method: "POST",
+            body: values,
+            headers: {Authorization: `Bearer ${token}`}
+        });
     }
+
+    useEffect(() => {
+        return function () {
+            abort();
+        }
+    }, [])
 
     return (
         <div>

@@ -1,20 +1,21 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Button from "@material-ui/core/Button";
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import * as Yup from "yup";
 
-import useHttp from "../hooks/http.hook";
+import useAbortableHttp from "../hooks/abortableHttp.hook";
 
 export default function RegistrationComponent() {
-    const {loading, request} = useHttp();
+    const history = useHistory()
+
+    const {abort, request, loading} = useAbortableHttp();
 
     const initialValues = {
         nickname: "",
         email: "",
         password: ""
     };
-
     const validationSchema = Yup.object({
         nickname: Yup.string()
             .max(30, "Must be 30 characters or less")
@@ -30,8 +31,18 @@ export default function RegistrationComponent() {
     });
 
     async function onSubmit(values) {
-        await request("/api/auth/register", "POST", {user: values})
+        await request("/api/auth/register", {
+            method: "POST",
+            body: {user: values}
+        })
+        history.push("/login");
     }
+
+    useEffect(() => {
+        return function () {
+            abort();
+        }
+    }, [])
 
     return (
         <div className="container">

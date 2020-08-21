@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Button from "@material-ui/core/Button";
 import {useParams, useHistory} from "react-router-dom"
 import {useSelector} from "react-redux";
@@ -6,7 +6,7 @@ import {isEqual} from "lodash";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 
-import useHttp from "../hooks/http.hook";
+import useAbortableHttp from "../hooks/abortableHttp.hook";
 import useConfirmation from "../hooks/confirmation.hook";
 
 export default function UserPost() {
@@ -18,18 +18,24 @@ export default function UserPost() {
         title: post?.title || "",
         description: post?.description || ""
     });
-
-    const {request, loading} = useHttp();
+    const {abort, request, loading} = useAbortableHttp();
     const {modal, handleShowChange, handleMessageChange} = useConfirmation(handleDeleting);
     const {token} = useSelector(state => state.authReducer);
     const {postId} = useParams();
-    const getPosts = useCallback(async function () {
-        const data = await request(`/api/user/post/${postId}`, "GET", null, {Authorization: `Bearer ${token}`});
-        setData(data)
-    }, [postId, request, token])
+
     useEffect(() => {
-        getPosts();
-    }, [getPosts])
+        request(`/api/user/post/${postId}`, {
+            method: "GET",
+            body: null,
+            headers: {Authorization: `Bearer ${token}`}
+        }).then(data => {
+            setData(data)
+        });
+
+        return function () {
+            abort();
+        }
+    }, [postId, token])
 
     const formik = useFormik({
         enableReinitialize: true,
@@ -43,11 +49,14 @@ export default function UserPost() {
                 .required('This field is required')
         }),
         onSubmit: async function (values) {
-            const data = await request(`/api/user/post/${postId}`, "PUT", values, {Authorization: `Bearer ${token}`});
+            const data = await request(`/api/user/post/${postId}`, {
+                method: "PUT",
+                body: values,
+                headers: {Authorization: `Bearer ${token}`}
+            });
             setData(data)
         }
     });
-
     useEffect(() => {
         if (!isEqual(formik.initialValues, formik.values)) {
             setIsChanged(true);
@@ -57,7 +66,11 @@ export default function UserPost() {
     }, [formik.initialValues, formik.values])
 
     async function handleDeleting() {
-        await request(`/api/user/post/${postId}`, "DELETE", null, {Authorization: `Bearer ${token}`});
+        await request(`/api/user/post/${postId}`, {
+            method: "DELETE",
+            body: null,
+            headers: {Authorization: `Bearer ${token}`}
+        });
         history.push("/user/account/my_posts");
     }
 

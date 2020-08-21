@@ -1,23 +1,27 @@
 import {useState, useCallback} from "react";
 import {useToasts} from 'react-toast-notifications'
 
-export default function useHttp() {
+export default function useAbortableHttp() {
     const {addToast} = useToasts();
 
     const [loading, setLoading] = useState(false);
 
-    const request = useCallback(async (url, method = "GET", body = null, headers = {}) => {
-        setLoading(true);
-        try {
-            if (body) {
-                body = JSON.stringify(body);
-                headers["Content-Type"] = "application/json";
-            }
+    const controller = new AbortController();
+    const {signal} = controller;
 
-            const response = await fetch(url, {method, body, headers});
+    const request = useCallback(async (url, opts) => {
+        setLoading(true);
+
+        if (opts && opts.body) {
+            opts.body = JSON.stringify(opts.body);
+            opts["headers"] = {};
+            opts["headers"]["Content-Type"] = "application/json";
+        }
+
+        try {
+            const response = await fetch(url, {...opts, signal});
             const data = await response.json();
 
-            //todo: make beautiful
             if (data && data.success) {
                 addToast(data.success, {appearance: "success"});
             }
@@ -33,11 +37,15 @@ export default function useHttp() {
 
             setLoading(false);
             return data;
-        } catch (error) {
+        } catch (err) {
+            if (err.name === 'AbortError') {
+                addToast("Request was aborted", {appearance: "warning"});
+                return;
+            }
             setLoading(false);
-            console.log(error);
+            console.log(err);
         }
-    }, [addToast]);
+    }, [addToast, signal]);
 
-    return {loading, request};
+    return {abort: () => controller.abort(), loading, request};
 }

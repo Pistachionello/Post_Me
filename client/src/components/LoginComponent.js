@@ -1,15 +1,15 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Button from "@material-ui/core/Button";
 import {Link} from "react-router-dom";
 import {Formik, Form, Field, ErrorMessage} from "formik";
 import * as Yup from "yup";
 
-import useHttp from "../hooks/http.hook";
+import useAbortableHttp from "../hooks/abortableHttp.hook";
 import useAuth from "../hooks/auth.hook";
 
 export default function LoginComponent() {
     const {login} = useAuth();
-    const {loading, request} = useHttp();
+    const {abort, request, loading} = useAbortableHttp();
 
     const initialValues = {
         email: "",
@@ -28,11 +28,20 @@ export default function LoginComponent() {
     });
 
     async function onSubmit(values) {
-        const data = await request("/api/auth/login", "POST", {user: values})
+        const data = await request("/api/auth/login", {
+            method: "POST",
+            body: {user: values},
+        })
         if (data && data.token) {
             login(data.token);
         }
     }
+
+    useEffect(() => {
+        return function () {
+            abort();
+        }
+    }, [])
 
     return (
         <div className="container">

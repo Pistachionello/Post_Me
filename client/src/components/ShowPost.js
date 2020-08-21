@@ -4,24 +4,30 @@ import Button from "@material-ui/core/Button";
 import {useParams} from "react-router-dom";
 import * as Yup from "yup";
 
-import useHttp from "../hooks/http.hook";
 import Loading from "./Loading";
+import useAbortableHttp from "../hooks/abortableHttp.hook";
 
 export default function ShowPost() {
     const {postId} = useParams();
 
-    const {loading, request} = useHttp();
+    const {abort, loading, request} = useAbortableHttp();
 
     const [post, setPost] = useState(null);
 
     const getPost = useCallback(async function () {
-        const data = await request(`/api/visitor/post/${postId}`, "GET");
+        const data = await request(`/api/visitor/post/${postId}`, {
+            method: "GET"
+        });
         if (data && data.result) {
             setPost(data.result);
         }
     }, [request, postId])
+
     useEffect(() => {
         getPost();
+        return function () {
+            abort();
+        }
     }, [getPost])
 
     const initialValues = {
@@ -35,7 +41,10 @@ export default function ShowPost() {
     });
 
     async function onSubmit(values) {
-        await request(`/api/visitor/post/${postId}/leave_comment`, "POST", values);
+        await request(`/api/visitor/post/${postId}/leave_comment`, {
+            method: "POST",
+            body: values
+        });
         getPost();
     }
 

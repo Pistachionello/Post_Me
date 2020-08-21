@@ -1,35 +1,37 @@
-import React, {useState, useEffect, useCallback} from "react";
+import React, {useState, useEffect} from "react";
 import {Link, useRouteMatch} from "react-router-dom";
 import {useSelector} from "react-redux";
 
-import useHttp from "../hooks/http.hook";
+import Loading from "./Loading";
+import useAbortableHttp from "../hooks/abortableHttp.hook";
 
 export default function ShowUserPosts() {
     const match = useRouteMatch();
     const {token} = useSelector(state => state.authReducer);
 
-    const {request, loading} = useHttp();
+    const {abort, request, loading} = useAbortableHttp();
 
     const [posts, setPosts] = useState(null);
 
-    const getPosts = useCallback(async function () {
-        const data = await request("/api/user/posts", "GET", null, {Authorization: `Bearer ${token}`});
-        if (data && data.result) {
-            setPosts(data.result);
-        }
-    }, [request, token])
-
     useEffect(() => {
-        getPosts();
-    }, [getPosts])
+        request("/api/user/posts", {
+            method: "GET",
+            body: null,
+            headers: {Authorization: `Bearer ${token}`}
+        }).then(data => {
+            if (data && data.result) {
+                setPosts(data.result);
+            }
+        });
+
+        return function () {
+            abort();
+        }
+    }, [token])
 
     return (
         <div>
-            {loading ? (
-                <div>
-                    loading
-                </div>
-            ) : (
+            {loading ? (<Loading/>) : (
                 <div>
                     {posts && posts.length ? posts.map((post) => {
                         return (
@@ -37,11 +39,7 @@ export default function ShowUserPosts() {
                                 <Link to={`${match.path}/${post.id}`}>{post.title}</Link>
                             </div>
                         );
-                    }) : (
-                        <div>
-                            You dont have posts
-                        </div>
-                    )}
+                    }) : (<div>You dont have posts</div>)}
                 </div>
             )}
         </div>

@@ -1,17 +1,17 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Collapse, Button} from "@material-ui/core";
 import {Alert} from "@material-ui/lab";
 import {useDispatch, useSelector} from "react-redux";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 
+import useAbortableHttp from "../hooks/abortableHttp.hook";
 import {updateUserData} from "../redux/reducers/authReducer";
-import useHttp from "../hooks/http.hook";
 
 export default function AccountSettings() {
     const {token, userData} = useSelector(state => state.authReducer);
     const dispatch = useDispatch();
-    const {request, loading} = useHttp();
+    const {abort, request, loading} = useAbortableHttp();
     const {id, nickname, email} = userData;
 
     const [open, setOpen] = useState(0)
@@ -27,12 +27,15 @@ export default function AccountSettings() {
                 .required('This field is required')
         }),
         onSubmit: async (values) => {
-            const data = await request(`/api/user/${id}/email`, "PUT", {changes: values}, {Authorization: `Bearer ${token}`});
-            if(data && data.result) {
+            const data = await request(`/api/user/${id}/email`, {
+                method: "PUT",
+                body: {changes: values},
+                headers: {Authorization: `Bearer ${token}`}
+            });
+            if (data && data.result) {
                 dispatch(updateUserData(data.result));
             }
         }
-
     })
 
     const nicknameFormik = useFormik({
@@ -45,13 +48,22 @@ export default function AccountSettings() {
                 .required('This field is required')
         }),
         onSubmit: async (values) => {
-            const data = await request(`/api/user/${id}/nickname`, "PUT", {changes: values}, {Authorization: `Bearer ${token}`});
-            if(data && data.result) {
+            const data = await request(`/api/user/${id}/nickname`, {
+                method: "PUT",
+                body: {changes: values},
+                headers: {Authorization: `Bearer ${token}`}
+            });
+            if (data && data.result) {
                 dispatch(updateUserData(data.result));
             }
         }
-
     })
+
+    useEffect(() => {
+        return function () {
+            abort();
+        }
+    }, [])
 
     return (
         <div className="account_setting_container">

@@ -2,22 +2,28 @@ import React, {useCallback, useEffect, useState} from "react";
 import {useHistory} from "react-router-dom";
 import Loader from 'react-loader-spinner'
 
-import useHttp from "../hooks/http.hook";
+import useAbortableHttp from "../hooks/abortableHttp.hook";
 
 export default function ShowPosts() {
     const history = useHistory();
 
-    const {loading, request} = useHttp();
+    const {abort, loading, request} = useAbortableHttp();
     const [posts, setPosts] = useState(null);
 
     const getPosts = useCallback(async function () {
-        const data = await request("/api/visitor/posts", "GET");
+        const data = await request("/api/visitor/posts", {
+            method: "GET"
+        });
         if (data && data.result) {
             setPosts(data.result);
         }
     }, [request])
+
     useEffect(() => {
         getPosts();
+        return function () {
+            abort();
+        }
     }, [getPosts])
 
     function handleRedirect(url) {
@@ -33,7 +39,8 @@ export default function ShowPosts() {
             ) : (
                 posts?.length && posts.map((post) => {
                     return (
-                        <div className="post_link" key={post.publication_date} onClick={() => handleRedirect(`/post/${post.id}`)}>
+                        <div className="post_link" key={post.publication_date}
+                             onClick={() => handleRedirect(`/post/${post.id}`)}>
                             {post.title}
                         </div>
                     )
