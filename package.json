@@ -4,6 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node app.js",
+    "client:install": "npm install --prefix client",
+    "client:build": "npm run build --prefix client",
+    "heroku-postbuild": "npm run client:install && npm run client:build",
     "devStart": "concurrently \"npm run devStartServer\" \"npm run devStartClient\"",
     "devStartServer": "nodemon app.js",
     "devStartClient": "npm start --prefix client"
