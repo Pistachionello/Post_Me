@@ -82,12 +82,11 @@ router.post("/register", async (req, res) => {
         }
 
         await AuthModule.register(candidate);
-        return res.status(201).json({success: "User has been created"});
+        return res.status(201).json({success: "User has been created", result: true});
     } catch (err) {
         return res.status(500).json({error: "Something went wrong on server", err});
     }
 })
-
 
 /** User confirmation route.
  *
@@ -104,16 +103,13 @@ router.post("/authorize", authMiddleware, async (req, res) => {
     if (!req.body.jwt || !id || !nickname || !email) {
         return res.status(200).json({error: "Not authorized"});
     }
-
     try {
         //Check if user encoded in token exists
         const foundedUser = await UserModule.findByFilterFirst({id})
         if (!foundedUser) {
             return res.status(200).json({error: "Not authorized"});
         }
-
         const user = await UserModule.getUserDataById(id);
-
         return res.json({
             verified: true,
             user,

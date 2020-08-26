@@ -31,11 +31,13 @@ export default function RegistrationComponent() {
     });
 
     async function onSubmit(values) {
-        await request("/api/auth/register", {
+        const data = await request("/api/auth/register", {
             method: "POST",
             body: {user: values}
         })
-        history.push("/login");
+        if (data && data.result) {
+            history.push("/login");
+        }
     }
 
     useEffect(() => {
@@ -51,7 +53,7 @@ export default function RegistrationComponent() {
                 validationSchema={validationSchema}
                 onSubmit={onSubmit}
             >
-                {(props) => {
+                {() => {
                     return (
                         <Form>
                             <div className="input_container mb-2">

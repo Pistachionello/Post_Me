@@ -33,9 +33,9 @@ export default function ShowPosts() {
                     <Loader type="ThreeDots"/>
                 </div>
             ) : (
-                posts?.length && posts.map((post) => {
+                posts?.length && posts.map((post, i) => {
                     return (
-                        <div className="post_link" key={post.publication_date}
+                        <div className="post_link" key={post.publication_date + i}
                              onClick={() => history.push(`/post/${post.id}`)}>
                             {post.title}
                         </div>

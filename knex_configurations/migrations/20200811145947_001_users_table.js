@@ -5,7 +5,6 @@ exports.up = function (knex) {
         t.string("email", 255).notNullable().unique();
         t.string("password", 255).notNullable();
         t.date("creation_date").notNullable();
-
     })
 };
 

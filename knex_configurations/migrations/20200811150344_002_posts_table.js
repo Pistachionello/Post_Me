@@ -10,7 +10,6 @@ exports.up = function (knex) {
         t.string("description", 5000).notNullable();
         t.date("publication_date").notNullable();
         t.date("last_update_date").notNullable();
-
     })
 };
 

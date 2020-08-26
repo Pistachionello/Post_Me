@@ -46,7 +46,6 @@ export default function useAbortableHttp() {
                 return;
             }
             setLoading(false);
-            console.log(err);
         }
     }, [addToast, signal]);
 

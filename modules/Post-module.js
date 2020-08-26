@@ -17,8 +17,8 @@ module.exports = {
 }
 
 async function add(post) {
-    const [id] = await db("posts").insert(post);
-    return id;
+    const {rowCount} = await db("posts").insert(post);
+    return rowCount;
 }
 
 async function updatePostById(id, changes) {

@@ -22,6 +22,6 @@ async function findByFilterFirst(filter) {
 }
 
 async function add(comment) {
-    const [id] = await db("comments").insert(comment);
-    return findById(id);
+    const {rowCount} = await db("comments").insert(comment);
+    return findById(rowCount);
 }

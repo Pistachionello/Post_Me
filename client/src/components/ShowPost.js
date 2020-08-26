@@ -94,9 +94,9 @@ export default function ShowPost() {
                         </div>
                         <hr/>
                         <div className="comments">
-                            {post.comments && post.comments.map((comment) => {
+                            {post.comments && post.comments.map((comment, i) => {
                                 return (
-                                    <div key={comment.publication_date}>
+                                    <div key={comment.publication_date + i}>
                                         Description: <br/>
                                         {comment.description} <br/>
                                         Publication date: {new Date(comment.publication_date).toUTCString()} <br/>

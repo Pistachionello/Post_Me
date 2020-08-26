@@ -33,9 +33,9 @@ export default function ShowUserPosts() {
         <div>
             {loading ? (<Loading/>) : (
                 <div>
-                    {posts && posts.length ? posts.map((post) => {
+                    {posts && posts.length ? posts.map((post, i) => {
                         return (
-                            <div key={post.publication_date}>
+                            <div key={post.publication_date + i}>
                                 <Link to={`${match.path}/${post.id}`}>{post.title}</Link>
                             </div>
                         );

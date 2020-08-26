@@ -26,7 +26,7 @@ async function findById(id) {
         .where({id}).first();
 }
 
-async function getUserDataById (id) {
+async function getUserDataById(id) {
     return db("users as u")
         .select("id", "nickname", "email", "creation_date")
         .where({id}).first();
@@ -41,8 +41,8 @@ async function findByFilterFirst(filter) {
 }
 
 async function add(user) {
-    const [id] = await db("users").insert(user);
-    return findById(id);
+    const {rowCount} = await db("users").insert(user);
+    return findById(rowCount);
 }
 
 async function addPost(post) {
@@ -63,7 +63,7 @@ async function getUserPostById(post_id) {
         .where({"p.id": post_id}).first();
 }
 
-async function updateUser (id, changes) {
+async function updateUser(id, changes) {
     return await db("users").where({id}).update(changes)
         .then(result => (result > 0 ? findById(id) : null));
 }

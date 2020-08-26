@@ -1,8 +1,11 @@
 module.exports = {
     development: {
-        client: 'sqlite3',
+        client: 'pg',
         connection: {
-            filename: './db/test-db.sqlite3'
+            database: "dyago",
+            host: "localhost",
+            user: "dyago",
+            password: "",
         },
         migrations: {
             directory: "./knex_configurations/migrations"

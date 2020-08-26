@@ -37,7 +37,7 @@ router.post("/post/create", authMiddleware, async (req, res) => {
             return res.status(200).json({error: "User is not found when creating post"});
         }
         const result = await UserModule.createPost(post);
-
+        console.log("here")
         return res.status(201).json({success: "Post was successful created!", result});
     } catch (err) {
         return res.status(500).json({error: "Something went wrong on server", err});
